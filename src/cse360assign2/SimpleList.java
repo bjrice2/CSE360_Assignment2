@@ -1,10 +1,10 @@
 package cse360assign2;
 
 /**
- * <h1>CSE 360 Assignment 1</h1>
+ * <h1>CSE 360 Assignment 2</h1>
  * <p>
  * Descripton: Defines the class SimpleList - an integer array
- * of size 10. This list is built as a stack (FILO).
+ * initially of size 10. This list is built as a stack (FILO).
  * @author Brandon Rice
  *
  */
@@ -24,6 +24,8 @@ public class SimpleList {
 	private int[] list;
 	 /**The number of user entered items contained in the list.**/
 	private int count;
+	/**The number of spots left in the list**/
+	private int empty;
 	
 	/**
 	 * Constructs the list and sets {@code count} to 0.
@@ -31,6 +33,7 @@ public class SimpleList {
 	public SimpleList() {
 		list = new int[10];
 		count = 0;
+		empty = 10;
 	}
 	
 	/**
@@ -40,11 +43,20 @@ public class SimpleList {
 	 */
 	public void add(int x) {
 		
+		if(empty == 0) {
+			int[] list2 = new int[(int) (count * 1.5)];
+			for(int i = 0; i < list.length; i++) {
+				list2[i] = list[i];
+			}
+			list = list2;
+			empty = (int) (count * 0.5);
+		}
 		for(int i = count; i > 0; i--) {
 			if(i < 10) list[i] = list[i - 1];
 		}
 		list[0] = x;
-		if(count < 10) count++;
+		count++;
+		empty--;
 	}
 	
 	/**
@@ -55,11 +67,19 @@ public class SimpleList {
 	public void remove(int x) {
 		int pos = search(x);
 		if(pos > -1) {
-			for(int i = pos; i < count; i++)
-			{
+			for(int i = pos; i < count; i++) {
 				if(i < 9) list[i] = list[i + 1];
 			}
 			count--;
+			empty++;
+			if(empty > (int)(0.25 * list.length) && list.length > 1) {
+				int[] list2 = new int[(int) (count * 0.75)];
+				for(int i = 0; i < list.length; i++) {
+					list2[i] = list[i];
+				}
+				list = list2;
+				empty = list.length - count;
+			}
 		}
 	}
 	
@@ -97,5 +117,51 @@ public class SimpleList {
 			}
 		}
 		return pos;
+	}
+	
+	/**
+	 * Adds an element {@code x} to the end of the list
+	 * (bottom of the stack) and updates {@code count} to
+	 * reflect the new number of elements.
+	 */
+	public void append(int x) {
+		if(empty == 0) {
+			int[] list2 = new int[(int) (count * 1.5)];
+			for(int i = 0; i < list.length; i++) {
+				list2[i] = list[i];
+			}
+			list = list2;
+			empty = (int) (count * 0.5);
+		}
+		
+		list[0] = x;
+		if(count < 10) count++;
+	}
+	
+	/**
+	 * Returns the first element in the list.
+	 */
+	public int first() {
+		int x = -1;
+		if(count > 0) x = list[0];
+		return x;
+	}
+	
+	/**
+	 * Returns the last element in the list.
+	 */
+	public int last() {
+		int x = -1;
+		if(count > 0) {
+			x = list[list.length - 1];
+		}
+		return x;
+	}
+	
+	/**
+	 * Returns the size of the list.
+	 */
+	public int size() {
+		return list.length;
 	}
 }
